@@ -1,0 +1,136 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
+import localFont from 'next/font/local'
+
+// 🔐 Supabase client aur Product Grid sub-component imports
+import { supabase } from '../lib/supabase' 
+import ProductGrid from './ProductGrid'
+
+// Your exact image imports
+import all from "../../public/icons/All (1).png"
+import tshirt from "../../public/icons/T-shirt.png"
+import coords from "../../public/icons/Co-ords.png"
+import Frock from "../../public/icons/Frock.png"
+import Pant from "../../public/icons/Pant.png"
+
+const marieFont = localFont({
+  src: "../../Fonts/Merienda-VariableFont_wght.ttf",
+  weight: "600",
+});
+
+// Updated to match your exact Supabase schema from image_8e173a.png
+interface ProductType {
+  id: string
+  title: string       // Changed from name to title
+  price: number
+  'image-url': string // Changed from image_url to image-url
+  category: string
+  discount?: number   // Added discount field
+}
+
+export default function Product() {
+  const [activeCategory, setActiveCategory] = useState('all')
+  const [products, setProducts] = useState<ProductType[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const categories = [
+    { id: 'all', name: 'All Products', icon: all },
+    { id: 'tshirt', name: 'T-Shirts', icon: tshirt },
+    { id: 'coords', name: 'Co-ords', icon: coords },
+    { id: 'frock', name: 'Frocks', icon: Frock },
+    { id: 'pant', name: 'Pants', icon: Pant },
+  ]
+
+  // 📡 Dynamic data fetching via Supabase
+  useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true)
+      try {
+        // Fetching exact column keys
+        let query = supabase.from('Product').select('id, title, price, category, image-url, discount')
+
+        if (activeCategory !== 'all') {
+          query = query.eq('category', activeCategory)
+        }
+
+        const { data, error } = await query
+        if (error) throw error
+
+        // Safely map data to TypeScript type definition
+        setProducts((data as unknown as ProductType[]) || [])
+      } catch (error) {
+        console.error('Error fetching products from database:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [activeCategory])
+
+  return (
+    <section className="w-full py-4 bg-stone-50/50 select-none">
+      <div className="max-w-[1300px] bg-white mx-auto px-4 sm:px-6 flex flex-col gap-8">
+        
+        {/* 🧭 FILTER BANNER */}
+        <div className="bg-[#d60f36] py-5 px-4 md:px-8 rounded-3xl shadow-xl flex flex-col gap-4 items-center w-full">
+          
+          <span className={`text-[17px] md:text-[19px] uppercase text-[#e2ddde] block text-center tracking-widest ${marieFont.className}`}>
+            Filter By Category
+          </span>
+
+          <div className="flex items-center justify-start md:justify-center gap-6 md:gap-8 overflow-x-auto w-full scroll-smooth snap-x py-1 px-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {categories.map((category) => {
+              const isActive = activeCategory === category.id
+
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  className="flex flex-col items-center justify-center min-w-[95px] snap-center bg-transparent border-0 outline-none group"
+                >
+                  
+                  {/* ⭕ ICON CIRCLES */}
+                  <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-all duration-300 ease-out ${
+                    isActive
+                      ? 'bg-white shadow-xl scale-105'
+                      : 'bg-[#b00627] border border-red-400/10 hover:bg-[#bf0b2e]'
+                  }`}>
+                    
+                    <div className={`relative w-7 h-7 md:w-9 md:h-9 flex items-center justify-center transition-all duration-300 ${
+                      isActive ? 'brightness-100' : 'brightness-0 invert opacity-90'
+                    }`}>
+                      <Image 
+                        src={category.icon} 
+                        alt={category.name} 
+                        width={36}
+                        height={36}
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 📋 DYNAMIC FONT LABEL */}
+                  <span className={`text-[12px] md:text-sm tracking-wide whitespace-nowrap block mt-2.5 transition-all duration-300 ${marieFont.className} ${
+                    isActive
+                      ? 'text-white font-bold'
+                      : 'text-[#e2ddde]/80 group-hover:text-white font-medium'
+                  }`}>
+                    {category.name}
+                  </span>
+
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* 📦 SEPARATE PRODUCT GRID COMPONENT */}
+        <ProductGrid products={products} loading={loading} />
+
+      </div>
+    </section>
+  )
+}
