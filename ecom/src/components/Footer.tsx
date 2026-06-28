@@ -4,7 +4,7 @@ import React from "react";
 
 export default function Footer() {
   return (
-    // 'relative' aur 'isolate' zaroori hain taake curves footer ke sath locked rahein aur baki content ke upar aayein
+    // "relative" aur "isolate" zaroori hain taake curves footer ke sath locked rahein aur baki content ke upar aayein
     <section className="relative isolate w-full h-[300px] bg-[#d60f36] mt-[100px]">
       
       {/* ─── SCALLOP CURVES (FIXED & LOCKED TO TOP OF FOOTER) ─── */}

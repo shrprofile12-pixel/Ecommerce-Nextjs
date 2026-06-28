@@ -4,8 +4,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-// import Elemnt from "../../public/Frame 7.png"
 import { cn } from "@/lib/utils";
 import localFont from "next/font/local";
  
@@ -51,31 +49,18 @@ const Skiper54 = () => {
   return (
     <div className="relative w-full overflow-hidden bg-[#FDFBF7] py-16 md:pt-9 flex flex-col items-center justify-center">
       
-      {/* ─── FIXED SECTION TITLE WITH BACKGROUND ELEMENT & LOCAL FONT ─── */}
-      {/* Wrapper me font variable class inject ki hai taake CSS rules apply ho sakein */}
       <div className={cn("relative flex items-center justify-center text-center mb-16 select-none h-24 w-full max-w-xl mx-auto", Beauty.variable)}>
-        
-        {/* Background decorative brush perfectly center align ho raha hai line break ke bina */}
         <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none opacity-90">
-          {/* <Image
-            src={Elemnt}
-            alt="Decorative line"
-            width={380}
-            height={90}
-            className="object-contain mt-15"
-            priority
-          /> */}
         </div>
         
-        {/* Custom font key class 'font-[family-name]' apply ki hai */}
-        <h2 className="relative z-10 text-4xl font-bold md:text-5xl  tracking-wide text-gray-900 mix-blend-multiply font-[family-name:var(--font-beauty)] capitalize pt-2">
+        <h2 className="relative z-10 text-4xl font-bold md:text-5xl tracking-wide text-gray-900 mix-blend-multiply font-[family-name:var(--font-beauty)] capitalize pt-2">
           Shop Categories
         </h2>
       </div>
 
       <Carousel_006
         images={formattedImages}
-        className="max-w-7xl w-full px-6 md:px-4 "
+        className="max-w-7xl w-full px-6 md:px-4"
         loop={true}
         showNavigation={true}
         showPagination={true}
@@ -104,13 +89,27 @@ const Carousel_006 = ({
 }: Carousel_006Props) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
+    // Evaluate layout dimensions only inside the client-side lifecycle safely
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    
+    handleResize(); // Initial setup execution
+    window.addEventListener("resize", handleResize);
+    
     if (!api) return;
 
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
     });
+
+    return () => window.removeEventListener("resize", handleResize);
   }, [api]);
 
   return (
@@ -134,23 +133,24 @@ const Carousel_006 = ({
           : []
       }
     >
-      <CarouselContent className="flex  md:grid md:grid-cols-3 gap-6 md:gap-8 md:transform-none md:flex-none -ml-4 md:ml-0 items-stretch">
+      <CarouselContent className="flex md:grid md:grid-cols-3 gap-6 md:gap-8 md:transform-none md:flex-none -ml-4 md:ml-0 items-stretch">
         {images.map((img, index) => (
           <CarouselItem
             key={index}
             onClick={() => api?.scrollTo(index)}
-            className="pl-4 md:pl-0 relative   border-[#d60f36] border-4 rounded-xl bg-[#d60f36] flex flex-col w-full basis-[85%] sm:basis-[50%] md:basis-full justify-start select-none group"
+            className="pl-4 md:pl-0 relative border-[#d60f36] border-4 rounded-xl bg-[#d60f36] flex flex-col w-full basis-[85%] sm:basis-[50%] md:basis-full justify-start select-none group"
           >
             <div className="w-full aspect-[3/4] relative overflow-hidden rounded-3xl shadow-md cursor-pointer bg-[#cc7586]">
               <motion.div
                 initial={false}
                 animate={{
-                  clipPath:
-                    typeof window !== "undefined" && window.innerWidth >= 768
-                      ? "inset(0% 0% 0% 0% round 1.5rem)"
-                      : current !== index
-                      ? "inset(6% 2% 6% 2% round 1.5rem)" 
-                      : "inset(0% 0% 0% 0% round 1.5rem)",
+                  clipPath: !isMounted
+                    ? "inset(6% 2% 6% 2% round 1.5rem)"
+                    : isDesktop
+                    ? "inset(0% 0% 0% 0% round 1.5rem)"
+                    : current !== index
+                    ? "inset(6% 2% 6% 2% round 1.5rem)" 
+                    : "inset(0% 0% 0% 0% round 1.5rem)",
                 }}
                 className="absolute inset-0 h-full w-full"
               >
@@ -214,6 +214,7 @@ const Carousel_006 = ({
       {showNavigation && (
         <div className="absolute top-[40%] -translate-y-1/2 left-0 right-0 flex justify-between pointer-events-none z-30 px-2 md:hidden">
           <button
+            type="button"
             aria-label="Previous slide"
             onClick={() => api?.scrollPrev()}
             className="pointer-events-auto rounded-full bg-white/90 border border-gray-100 p-3 shadow-md text-gray-800"
@@ -221,6 +222,7 @@ const Carousel_006 = ({
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
+            type="button"
             aria-label="Next slide"
             onClick={() => api?.scrollNext()}
             className="pointer-events-auto rounded-full bg-white/90 border border-gray-100 p-3 shadow-md text-gray-800"
@@ -236,6 +238,7 @@ const Carousel_006 = ({
           <div className="flex items-center justify-center gap-2">
             {Array.from({ length: images.length }).map((_, index) => (
               <button
+                type="button"
                 key={index}
                 onClick={() => api?.scrollTo(index)}
                 className={cn(

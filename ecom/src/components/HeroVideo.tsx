@@ -1,9 +1,8 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import localFont from 'next/font/local'
 import bgImage from "../../public/Group 4 bg.png" 
 import Image from 'next/image'
-import { Button } from './ui/button'
 import ButtonProp from "../components/ButtonProp"
 import { CiShop } from "react-icons/ci"
 import { IoChevronDownOutline } from "react-icons/io5"
@@ -20,16 +19,23 @@ const marieFont = localFont({
 })
 
 export default function HeroVideoSection() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return (
+      <section className="relative bg-[#E9B0B0] w-full min-h-[calc(100vh-80px)] md:h-[calc(100vh-80px)]" />
+    )
+  }
+
   return (
-    // Changed flex-row to flex-col for mobile, changes to flex-row on desktop (md:)
-    // Uses min-h instead of fixed h for mobile content expansion safety
     <section className="relative bg-[#E9B0B0] w-full min-h-[calc(100vh-80px)] md:h-[calc(100vh-80px)] flex flex-col md:flex-row items-center select-none overflow-hidden">
       
-      {/* 📝 LEFT SIDE: Content Container */}
-      {/* Takes 100% width on mobile, 50% on desktop. Text aligns center on mobile, left on desktop */}
       <div className='w-full md:w-1/2 px-6 sm:px-12 md:px-16 lg:pl-24 py-12 md:py-0 space-y-4 z-10 flex flex-col justify-center items-center md:items-start text-center md:text-left'>
         
-        {/* Dynamic fluid typography sizing */}
         <h1 className={`${pilar.className} text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-black leading-none tracking-wide block`}>
           CHICow
         </h1>
@@ -42,10 +48,8 @@ export default function HeroVideoSection() {
           Premium streetwear for the bold.
         </span>
 
-        {/* 🚀 BUTTONS WRAPPER: Stacks on mobile, inline on tablet upwards */}
         <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-4 items-center sm:items-stretch h-auto sm:h-12 md:h-14 mt-4 md:pl-8">
           
-          {/* Shop Now Button */}
           <ButtonProp 
             label="Shop Now"
             variant="primary"
@@ -54,7 +58,6 @@ export default function HeroVideoSection() {
             icon={<CiShop className="text-white size-6 md:size-7 font-bold" />} 
           />
 
-          {/* Explore Gender Dropdown Container */}
           <div className="group relative inline-block text-left w-full sm:w-auto h-12 sm:h-full">
             <ButtonProp 
               label="Explore Gender"
@@ -68,7 +71,6 @@ export default function HeroVideoSection() {
               }
             />
 
-            {/* Dropdown Menu Layer */}
             <div className="absolute left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 mt-2 w-full min-w-[210px] bg-white rounded-2xl shadow-2xl border border-neutral-100 overflow-hidden z-50 flex flex-col pointer-events-none opacity-0 translate-y-2 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0">
               <Link 
                 href="/shop/men" 
@@ -90,13 +92,12 @@ export default function HeroVideoSection() {
         
       </div>
 
-      {/* 🖼️ RIGHT SIDE: Campaign Image */}
-      {/* 100% full width and explicit fluid height on mobile, returns to split view with safe overlapping on desktop */}
       <div className="relative w-full md:w-1/2 h-[380px] sm:h-[480px] md:h-full md:ml-[-120px] lg:ml-[-210px] z-0">
         <Image 
           src={bgImage} 
           alt="CHICow Campaign Background" 
           fill 
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover" 
           style={{ objectPosition: '70% 25%' }} 
           priority 

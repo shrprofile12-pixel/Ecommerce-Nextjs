@@ -128,10 +128,11 @@ const Header = () => {
           Home
         </Link>
 
-        {Object.values(MENU_DATA).map((category) => (
-          <NavigationMenu key={category.label} className="relative z-50">
-            <NavigationMenuList>
-              <NavigationMenuItem>
+        {/* Unified Navigation Context */}
+        <NavigationMenu className="relative z-50">
+          <NavigationMenuList className="flex gap-8">
+            {Object.values(MENU_DATA).map((category) => (
+              <NavigationMenuItem key={category.label}>
                 <NavigationMenuTrigger className={`bg-transparent ${marieFont.className} text-white/90 text-xl border-b-2 border-transparent hover:border-white hover:bg-transparent hover:text-white focus:bg-transparent focus:text-white data-[state=open]:bg-transparent data-[state=open]:text-white data-[active]:bg-transparent pb-1 transition-all duration-200 shadow-none`}>
                   {category.label}
                 </NavigationMenuTrigger>
@@ -161,9 +162,9 @@ const Header = () => {
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        ))}
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
       </nav>
 
       {/* Right Side Icons Box */}
@@ -182,9 +183,9 @@ const Header = () => {
                 </button>
               </SheetTrigger>
               <SheetContent 
-  side="right" 
-  className="w-full sm:max-w-[400px] bg-white text-gray-900 p-6 overflow-y-auto"
->
+                side="right" 
+                className="w-full sm:max-w-[400px] bg-white text-gray-900 p-6 overflow-y-auto"
+              >
                 <SheetHeader className="text-left border-b pb-4">
                   <SheetTitle className={`${beautyFont.className} text-2xl tracking-wider text-[#d60f36]`}>CHICOW</SheetTitle>
                   <SheetDescription className="sr-only">Mobile Navigation Drawer Links</SheetDescription>
@@ -207,6 +208,7 @@ const Header = () => {
                           
                           {category.sections.map((section, idx) => (
                             <div key={idx} className="flex flex-col gap-2 pl-2">
+                              {/* Fixed Closing Tag Below */}
                               <h5 className="text-xs font-bold uppercase text-gray-400 tracking-wider">
                                 {section.title}
                               </h5>

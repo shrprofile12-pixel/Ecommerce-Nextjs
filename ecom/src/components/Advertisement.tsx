@@ -83,9 +83,7 @@ export default function Advertisement() {
                 loop        
                 playsInline 
                 controls 
-              >
-                Your browser does not support the video tag.
-              </video>
+              />
 
               {/* Interactive Fade-out Shield Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/5 pointer-events-none transition-opacity duration-400 group-hover:opacity-0" />
@@ -121,7 +119,7 @@ export default function Advertisement() {
                 alt="Premium Embroidered Shirt"
                 fill
                 sizes="(max-width: 768px) 100vw, 720px"
-                className="object-cover object-center transition-transform duration-[800ms] group-hover:scale-103"
+                className="object-cover object-center transition-transform duration-[800ms] group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent pointer-events-none" />
               
