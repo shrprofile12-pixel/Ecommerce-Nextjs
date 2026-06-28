@@ -32,7 +32,7 @@ export default function Product() {
 
   const categories = [
     { id: 'all', name: 'All Products', icon: all },
-    { id: 'tshirt', name: 'T-Shirts', icon: tshirt },
+    { id: 'T-shirt', name: 'T-Shirts', icon: tshirt },
     { id: 'coords', name: 'Co-ords', icon: coords },
     { id: 'Frock', name: 'Frocks', icon: Frock },
     { id: 'pant', name: 'Pants', icon: Pant },
@@ -43,7 +43,8 @@ export default function Product() {
     async function fetchProducts() {
       setLoading(true);
       try {
-        let query = supabase.from('Product').select('id, title, price, category, image-url, discount, colors');
+        // 1. "image-url" wrapped in double quotes fixes PostgREST PGRST125 hyphen error
+        let query = supabase.from('Product').select('id, title, price, category, "image-url", discount, colors');
 
         if (activeCategory !== 'all') {
           query = query.eq('category', activeCategory);
@@ -52,10 +53,13 @@ export default function Product() {
         const { data, error } = await query;
         if (error) throw error;
 
+        // 2. Logs live data directly to your browser inspector panel for visibility
+        console.log("Supabase fetched data successfully:", data);
         setProducts((data as unknown as ProductType[]) || []);
       } catch (error) {
         console.error('Error fetching products from database:', error);
       } finally {
+        // 3. Clean 'finally' block ensures loading finishes gracefully without build breaks
         setLoading(false);
       }
     }

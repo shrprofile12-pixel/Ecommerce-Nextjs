@@ -48,15 +48,17 @@ export default function HeroVideoSection() {
           Premium streetwear for the bold.
         </span>
 
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-4 items-center sm:items-stretch h-auto sm:h-12 md:h-14 mt-4 md:pl-8">
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-4 items-center sm:items-stretch h-auto sm:h-12 md:h-14 mt-4 md:pl-2">
           
-          <ButtonProp 
-            label="Shop Now"
-            variant="primary"
-            className={`w-full sm:w-[190px] text-lg md:text-xl ${marieFont.className} !inline-flex !items-center !justify-center !py-0 h-12 sm:h-full`}
-            href="/shop"
-            icon={<CiShop className="text-white size-6 md:size-7 font-bold" />} 
-          />
+          <div className="w-full sm:w-auto h-12 sm:h-full">
+            <ButtonProp 
+              label="Shop Now"
+              variant="primary"
+              className={`w-full sm:w-auto text-lg md:text-xl ${marieFont.className} !inline-flex !items-center !justify-center !py-0 h-full px-6`}
+              href="/shop"
+              icon={<CiShop className="text-white size-6 md:size-7 font-bold" />} 
+            />
+          </div>
 
           <div className="group relative inline-block text-left w-full sm:w-auto h-12 sm:h-full">
             <ButtonProp 
@@ -71,7 +73,7 @@ export default function HeroVideoSection() {
               }
             />
 
-            <div className="absolute left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 mt-2 w-full min-w-[210px] bg-white rounded-2xl shadow-2xl border border-neutral-100 overflow-hidden z-50 flex flex-col pointer-events-none opacity-0 translate-y-2 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0">
+            <div className="absolute  left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 mt-2 w-full min-w-[210px] bg-white rounded-2xl shadow-2xl border border-neutral-100 overflow-hidden z-50 flex flex-col pointer-events-none opacity-0 translate-y-2 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0">
               <Link 
                 href="/shop/men" 
                 className={`px-6 py-3.5 text-neutral-800 hover:bg-neutral-50 hover:border-b-4 hover:border-black text-left text-lg transition-colors duration-200 border-b border-neutral-100 ${marieFont.className}`}
@@ -92,14 +94,14 @@ export default function HeroVideoSection() {
         
       </div>
 
-      <div className="relative w-full md:w-1/2 h-[380px] sm:h-[480px] md:h-full md:ml-[-120px] lg:ml-[-210px] z-0">
+      <div className="relative w-full md:w-1/2 h-[380px] sm:h-[480px] md:h-full md:ml-[-60px] lg:ml-[-110px] z-0">
         <Image 
           src={bgImage} 
           alt="CHICow Campaign Background" 
           fill 
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover" 
-          style={{ objectPosition: '70% 25%' }} 
+          style={{ objectPosition: '74% 25%' }} 
           priority 
         />
       </div>

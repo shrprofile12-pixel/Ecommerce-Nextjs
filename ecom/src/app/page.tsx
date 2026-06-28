@@ -4,6 +4,9 @@ import HeroVideoSection from "@/components/HeroVideo";
 import {Skiper54} from "@/components/Skiper54";
 import  Advertisement  from "../components/Advertisement";
 import Product from "@/components/Product";
+import NewArrivals from "@/components/NewArrivals";
+import TrustBadges from "@/components/TrustBadges";
+import CommentShowcse from "@/components/CommentShowcse";
 export default function Home() {
   return (
     <>
@@ -13,10 +16,9 @@ export default function Home() {
       <Skiper54 />    
       <Product/>
       <Advertisement />
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-          <h1>Welcome to the Home Page</h1>
-          <p>This is a simple home page content.</p>
-        </main>
+      <NewArrivals/>
+      <TrustBadges/>
+     <CommentShowcse/>
       
 
 
