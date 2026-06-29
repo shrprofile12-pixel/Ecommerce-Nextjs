@@ -44,7 +44,7 @@ export default function Product() {
       setLoading(true);
       try {
         // 1. "image-url" wrapped in double quotes fixes PostgREST PGRST125 hyphen error
-        let query = supabase.from('Product').select('id, title, price, category, "image-url", discount, colors');
+        let query = supabase.from('Product').select('id, title, price, category, "image-url", discount, colors,slug');
 
         if (activeCategory !== 'all') {
           query = query.eq('category', activeCategory);

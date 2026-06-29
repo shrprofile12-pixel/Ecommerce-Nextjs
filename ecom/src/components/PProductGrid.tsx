@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link"; // <-- 1. LINK IMPORT KIYA
 import Autoplay from "embla-carousel-autoplay";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Heart, ShoppingBag } from "lucide-react";
@@ -19,6 +20,7 @@ export interface ProductType {
   price: number;
   'image-url': string;
   category: string;
+  slug: string; // <-- 2. SLUG TYPESCRIPT DEFINITION ADD KI
   colors?: string | string[];
   discount?: number;
 }
@@ -98,12 +100,12 @@ export function Carousel_006({
   }, [api]);
 
   const toggleFavorite = (e: React.MouseEvent, id: string | number) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Yeh detail page khulne se rokega jab dil par click ho
     setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const handleAddToCart = (e: React.MouseEvent, product: ProductType) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Yeh detail page khulne se rokega jab cart button click ho
     console.log("Added to cart:", product);
   };
 
@@ -146,7 +148,11 @@ export function Carousel_006({
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full h-full"
               >
-                <div className="group relative border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col cursor-pointer h-full">
+                {/* 3. YAHAAN DIV KO LINK SE BADAL DIYA AUR HREF DE DIYA */}
+                <Link 
+                  href={`/shop/${product.slug}`}
+                  className="group relative border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col cursor-pointer h-full w-full"
+                >
                   
                   <div className="relative aspect-[3/4] bg-neutral-50 w-full overflow-hidden shrink-0">
                     <Image
@@ -226,7 +232,7 @@ export function Carousel_006({
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link> {/* <-- DIV KI JAGAH LINK CLOSE KIYA */}
               </motion.div>
             </CarouselItem>
           );
