@@ -1,63 +1,31 @@
-import { supabase } from "@/lib/supabase"; 
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image"; 
 import ProductPageCrousel from "@/components/ProductPageCrousel";
+import { ProductService } from "@/services/product.service";
+import { formatProductData } from "../../../lib/product_utils";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
-  // 1. URL se dynamic slug uthayein
+  // 1. URL se slug extract karein
   const { slug } = await params;
 
-  // 2. Supabase se current product fetch karein
-  const { data: product, error } = await supabase
-    .from("Product")
-    .select("*")
-    .eq("slug", slug)
-    .single();
-
-  // 3. Agar nahi mila toh 404
-  if (error || !product) {
+  // 2. Centralized Service ke through single product fetch karein
+  const product = await ProductService.getBySlug(slug);
+  
+  // Agar product nahi mila, toh automatic 404 page
+  if (!product) {
     notFound();
   }
 
-  // 4. Same Category ke related products fetch karein (Current product ko hata kar)
-  const { data: relatedProductsData } = await supabase
-    .from("Product")
-    .select("*")
-    .eq("category", product.category)
-    .not("id", "eq", product.id)
-    .limit(8);
+  // 3. Centralized Service ke through related products automatic fallback ke sath load karein
+  const relatedProducts = await ProductService.getRelated(product.category, product.id);
 
-  // 🔄 FALLBACK LOGIC: Agar is category mein koi aur product nahi mila, toh dusre general products load karo
-  let relatedProducts = relatedProductsData;
-  if (!relatedProducts || relatedProducts.length === 0) {
-    const { data: fallbackProducts } = await supabase
-      .from("Product")
-      .select("*")
-      .not("id", "eq", product.id)
-      .limit(8);
-    relatedProducts = fallbackProducts;
-  }
-
-  // 🎨 Colors handling logic
-  let colorList: string[] = [];
-  if (product.colors) {
-    if (Array.isArray(product.colors)) {
-      colorList = product.colors.map(c => String(c).trim()).filter(Boolean);
-    } else if (typeof product.colors === 'string') {
-      colorList = product.colors.split(',').map(c => c.trim()).filter(Boolean);
-    }
-  }
-
-  // 🏷️ Discount and Pricing Calculations
-  const hasDiscount = product.discount && product.discount > 0;
-  const finalPrice = hasDiscount 
-    ? product.price - (product.price * (product.discount || 0) / 100)
-    : product.price;
+  // 4. Centralized Helper util se single-line mein pricing aur colors format karein
+  const { colorList, hasDiscount, finalPrice } = formatProductData(product);
 
   return (
     <div className="min-h-screen bg-black text-white p-6 md:p-12">
@@ -70,7 +38,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         
-        {/* 📸 Left Side: Product Image Card */}
+        {/* 📸 Left Side: Product Image Card with Clean Static Badges */}
         <div className="relative border border-zinc-800 rounded-2xl overflow-hidden bg-zinc-900 shadow-2xl h-[450px] md:h-[600px] w-full group">
           <Image
             src={product['image-url'] || "/web.png"} 
@@ -81,14 +49,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             priority
           />
 
-          {/* 🏷️ Top-Left: Discount Percent Tag */}
+          {/* Top-Left: Discount Percent Tag */}
           {hasDiscount && (
             <div className="absolute top-4 left-4 bg-pink-600 text-white text-xs font-black px-3 py-1.5 rounded-lg shadow-md tracking-widest uppercase z-10">
               {product.discount}% OFF
             </div>
           )}
 
-          {/* 🚀 Top-Right: Dynamic Status Tag */}
+          {/* Top-Right: Dynamic Status Tag */}
           {product.tag && (
             <div className="absolute top-4 right-4 bg-zinc-800 border border-zinc-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-md tracking-widest uppercase z-10">
               {product.tag}
@@ -96,7 +64,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           )}
         </div>
 
-        {/* 📝 Right Side: Product Details */}
+        {/* 📝 Right Side: Product Details & Dynamic Controls */}
         <div className="flex flex-col sticky top-6">
           <span className="text-pink-600 font-bold tracking-widest text-xs uppercase mb-2">
             CHICOW STREETWEAR
@@ -165,7 +133,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
           </div>
 
-          {/* 🛒 CTA Buttons Group */}
+          {/* CTA Buttons Group */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full">
             <button 
               type="button" 
