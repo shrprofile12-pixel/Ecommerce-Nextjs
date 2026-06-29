@@ -4,6 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase'; 
 import { ProductType } from './PProductGrid'; 
+import localFont from "next/font/local";
+
+const Beauty = localFont({
+  src: "../../Fonts/Merienda-VariableFont_wght.ttf",
+  display: "swap",
+});
 
 export default function NewArrivals() {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -13,7 +19,6 @@ export default function NewArrivals() {
     async function fetchNewArrivals() {
       try {
         setLoading(true);
-        
         const { data, error } = await supabase
           .from('Product')
           .select('id, title, price, category, "image-url", discount, colors')
@@ -37,7 +42,7 @@ export default function NewArrivals() {
     return (
       <section className="w-full py-12 bg-white">
         <div className="max-w-[1300px] mx-auto px-4 sm:px-6">
-          <div className="h-8 w-48 bg-stone-200 animate-pulse rounded mb-8" />
+          <div className="h-8 w-48 bg-stone-200 animate-pulse rounded mb-8 mx-auto" />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="aspect-[3/4] bg-stone-100 animate-pulse rounded-2xl" />
@@ -54,23 +59,20 @@ export default function NewArrivals() {
     <section className="w-full py-12 bg-white select-none">
       <div className="max-w-[1300px] mx-auto px-4 sm:px-6 flex flex-col gap-8">
         
-        {/* 🏷️ SECTION TITLE */}
-        <div className="flex items-center justify-between border-b border-stone-100 pb-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight">
-            New Arrivals 🔥
-          </h2>
-          <span className="text-sm font-semibold text-[#d60f36] bg-red-50 px-3 py-1 rounded-full">
-            Just In
+        <div className="flex flex-col items-center justify-center text-center pb-2">
+          <span className="text-xs md:text-sm font-semibold tracking-[0.25em] uppercase text-[#d60f36]">
+            Freshly Curated For You
           </span>
+          <h2 className={`text-4xl md:text-5xl text-stone-900 mt-1 ${Beauty.className}`}>
+            New Arrivals
+          </h2>
         </div>
 
-        {/* 📦 CARD GRID */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
           {products.map((product) => {
             const imageUrl = product['image-url'] || '/placeholder.png';
             const hasDiscount = product.discount && product.discount > 0;
             
-            // Safe parsing if color data is an array or string-split collection
             const productColors = Array.isArray(product.colors) 
               ? product.colors 
               : product.colors 
@@ -82,14 +84,12 @@ export default function NewArrivals() {
                 key={product.id} 
                 className="group flex flex-col bg-white border border-stone-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative"
               >
-                {/* 🌟 DISCOUNT BADGE */}
                 {hasDiscount && (
                   <span className="absolute top-2 left-2 z-10 bg-[#d60f36] text-white text-[10px] md:text-xs font-bold px-2 py-0.5 rounded-md shadow-sm">
                     -{product.discount}%
                   </span>
                 )}
 
-                {/* 📸 PRODUCT IMAGE */}
                 <div className="relative aspect-[3/4] w-full bg-stone-50 overflow-hidden">
                   <Image
                     src={imageUrl}
@@ -100,7 +100,6 @@ export default function NewArrivals() {
                   />
                 </div>
 
-                {/* 📝 PRODUCT INFO */}
                 <div className="p-3 md:p-4 flex flex-col flex-grow gap-1.5">
                   <span className="text-[10px] md:text-xs font-medium uppercase tracking-wider text-stone-400">
                     {product.category}
@@ -110,7 +109,6 @@ export default function NewArrivals() {
                     {product.title}
                   </h3>
 
-                  {/* 🎨 DYNAMIC COLOR BADGES */}
                   {productColors.length > 0 && (
                     <div className="flex items-center gap-1.5 py-0.5">
                       {productColors.map((color, idx) => (
@@ -124,7 +122,6 @@ export default function NewArrivals() {
                     </div>
                   )}
 
-                  {/* 💰 PRICING */}
                   <div className="flex items-center gap-2 mt-auto pt-1">
                     <span className="text-sm md:text-base font-bold text-stone-900">
                       Rs. {product.price}

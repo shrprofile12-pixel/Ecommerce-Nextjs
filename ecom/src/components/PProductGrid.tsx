@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Carousel,
@@ -52,7 +52,6 @@ export default function PProductGrid({ products, loading }: ProductGridProps) {
 
   return (
     <div className="flex flex-col gap-12 w-full">
-      {/* 🎠 ONLY CAROUSEL SECTION */}
       {products.length > 0 && (
         <div className="flex flex-col w-full items-center justify-center overflow-hidden bg-[#ffffff] rounded-3xl p-6 md:p-2 relative">
           <Carousel_006
@@ -87,6 +86,7 @@ export function Carousel_006({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [favorites, setFavorites] = useState<Record<string | number, boolean>>({});
 
   useEffect(() => {
     setIsMounted(true);
@@ -96,6 +96,16 @@ export function Carousel_006({
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
+
+  const toggleFavorite = (e: React.MouseEvent, id: string | number) => {
+    e.stopPropagation();
+    setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleAddToCart = (e: React.MouseEvent, product: ProductType) => {
+    e.stopPropagation();
+    console.log("Added to cart:", product);
+  };
 
   return (
     <Carousel
@@ -120,6 +130,8 @@ export function Carousel_006({
             ? product.price - (product.price * (product.discount || 0) / 100)
             : product.price;
 
+          const isFavorite = !!favorites[product.id];
+
           return (
             <CarouselItem
               key={product.id || index}
@@ -134,16 +146,16 @@ export function Carousel_006({
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full h-full"
               >
-                <div className="group relative border border-black/20 border-2 bg-white hover:bg-amber-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col cursor-pointer h-full">
+                <div className="group relative border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col cursor-pointer h-full">
                   
                   <div className="relative aspect-[3/4] bg-neutral-50 w-full overflow-hidden shrink-0">
                     <Image
                       src={product['image-url'] || '/placeholder-product.png'} 
                       alt={product.title || "Product image"} 
                       fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                      sizes="(max-w: 640px) 100vw, (max-w: 768px) 50vw, 33vw"
                       className="object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
-                      priority={false}
+                      priority={index === 0}
                     />
 
                     {hasDiscount && (
@@ -151,6 +163,26 @@ export function Carousel_006({
                         {product.discount}% OFF
                       </div>
                     )}
+
+                    <button
+                      type="button"
+                      onClick={(e) => toggleFavorite(e, product.id)}
+                      className="absolute top-2.5 right-2.5 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white text-neutral-600 hover:text-[#d60f36] transition-all z-10"
+                      aria-label="Add to favorites"
+                    >
+                      <Heart className={cn("w-4 h-4 transition-colors", isFavorite && "fill-[#d60f36] text-[#d60f36]")} />
+                    </button>
+
+                    <div className="absolute inset-x-0 bottom-3 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-4 z-10">
+                      <button
+                        type="button"
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className="w-full bg-[#d60f36] hover:bg-[#b00c2b] text-white text-xs md:text-sm font-semibold py-2 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+                      >
+                        <ShoppingBag className="w-4 h-4" />
+                        Add to Cart
+                      </button>
+                    </div>
                   </div>
 
                   <div className="p-3 md:p-4 flex flex-col flex-grow justify-between gap-2">
@@ -206,7 +238,7 @@ export function Carousel_006({
           <button 
             type="button"
             onClick={() => api?.scrollPrev()} 
-            className="absolute left-[-3px] top-1/2 -translate-y-1/2 rounded-full bg-amber-300 hover:bg-white shadow-md p-4 transition-all z-10 hidden sm:block border border-neutral-200" 
+            className="absolute left-[-3px] top-1/2 -translate-y-1/2 rounded-full bg-white/80 hover:bg-white shadow-md p-3 transition-all z-10 hidden sm:block border border-neutral-200" 
             aria-label="Previous slide"
           >
             <ChevronLeft className="text-neutral-800 w-7 h-7" />

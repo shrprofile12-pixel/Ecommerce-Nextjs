@@ -35,7 +35,7 @@ export default function Product() {
     { id: 'T-shirt', name: 'T-Shirts', icon: tshirt },
     { id: 'coords', name: 'Co-ords', icon: coords },
     { id: 'Frock', name: 'Frocks', icon: Frock },
-    { id: 'pant', name: 'Pants', icon: Pant },
+    { id: 'Pant', name: 'Pants', icon: Pant },
   ];
 
   // 📡 Dynamic client runtime data fetching via Supabase
